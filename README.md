@@ -51,6 +51,12 @@ $ psql -h localhost --port 8493 -U pguser testdb
 ```
 
 ```SQL
+testdb=> SELECT * FROM trucks;
+  name   | odometer | location 
+---------+----------+----------
+ Truck 2 |        0 | Office
+ Truck 1 |        0 | Home
+
 testdb=> TRANSIT UPDATE trucks SET location = 'Office';
 
 step_num   |  proc_name 
@@ -58,6 +64,13 @@ step_num   |  proc_name
          0 |  move_truck
          1 |  move_truck
           ...
+
+testdb=> SELECT * FROM trucks;
+  name   | odometer | location 
+---------+----------+----------
+ Truck 2 |        0 | Office
+ Truck 1 |        7 | Office
+
 ```
 
 `TRANSIT` queries tell HyperC to calculate transition plan instead of 'just' accepting the change. You will also notice that `odometer` reading was updated automatically, as `move_truck` procedure was also counting mileage at every execution.
