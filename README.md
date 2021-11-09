@@ -37,7 +37,7 @@ Then connect to the database using [pgAdmin](https://www.pgadmin.org/) or your f
 To run with persistent data, use:
 
 ```
-docker run -p 8493:8493 -v <path to your local folder>:/opt/hyperc/db/data hypercdb/hypercdb
+docker run --name hyperc -p 8493:8493 -v <path to your local folder>:/opt/hyperc/db/data hypercdb/hypercdb
 ```
 
 ### Create your first plan
