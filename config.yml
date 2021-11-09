@@ -1,0 +1,24 @@
+plugins:
+  - hyperc 
+
+settings:
+  log-level: info
+  intercept-log: /var/log/postgresql-proxy/intercept.log
+  general-log: /var/log/postgresql-proxy/general.log
+
+instances:
+  - listen:
+      name: proxy
+      host: 0.0.0.0
+      port: 8493
+    redirect:
+      name: postgresql
+      host: 127.0.0.1
+      port: 5432
+    intercept:
+      commands:
+        queries:
+          - plugin: hyperc 
+            function: rewrite_query
+        connects:
+      responses:
