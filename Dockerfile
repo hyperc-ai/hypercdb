@@ -33,10 +33,20 @@ RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-
 RUN chown -R postgres:postgres $PGHOME
 RUN add-apt-repository ppa:pypy/ppa && apt-get update && apt-get install -y pypy3
 
-RUN mkdir -p /var/lib/postgresql && cd /var/lib/postgresql && pip install virtualenv && virtualenv -p python3.8 .local && . .local/bin/activate && pip install downward_ch openpyxl flask formulas schedula sqlalchemy gspread google-api-python-client google_auth_oauthlib flask msal PyYAML==5.4.1 psycopg2-binary logzero 
+RUN mkdir -p /var/lib/postgresql && cd /var/lib/postgresql && pip install virtualenv && virtualenv -p python3.8 .local && . .local/bin/activate && pip install downward_ch openpyxl flask formulas schedula sqlalchemy gspread==3.6.0 google-api-python-client google_auth_oauthlib flask msal PyYAML==5.4.1 psycopg2-binary logzero 
 # RUN mkdir /opt/hyperc/examples
-RUN cd /var/lib/postgresql && . .local/bin/activate && pip install git+https://github.com/hyperc-ai/hyperc && pip install git+https://github.com/hyperc-ai/hyper-etable && echo rebuild1
-RUN cd /opt/hyperc && git clone --depth=1 https://github.com/hyperc-ai/hyperc-psql-proxy && mkdir /etc/hyperc && cp hyperc-psql-proxy/config.yml.example /etc/hyperc/config.yml && echo rebuild3
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y locales unzip
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+ENV LANG en_US.UTF-8 
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8 
+RUN cd /var/lib/postgresql && . .local/bin/activate && cd /tmp && git clone -b python38 https://github.com/grandrew/pyclips && cd pyclips && wget -q -O clips.zip 'https://downloads.sourceforge.net/project/clipsrules/CLIPS/6.31/clips_core_source_631.zip?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fclipsrules%2Ffiles%2FCLIPS%2F6.31%2Fclips_core_source_631.zip%2Fdownload&ts=1554816443' && unzip ./clips.zip && CLIPS_SRC=clips_core_source_631/core python ./setup.py build && CLIPS_SRC=clips_core_source_631/core python ./setup.py install
+RUN cd /var/lib/postgresql && . .local/bin/activate && pip install networkx==2.6.3 sympy==1.9 attrs
+RUN cd /var/lib/postgresql && . .local/bin/activate && pip install git+https://github.com/hyperc-ai/hyperc && pip install git+https://github.com/hyperc-ai/hyper-etable && echo rebuild8
+RUN mkdir /var/cache/hyperc && chmod 777 /var/cache/hyperc
+RUN cd /opt/hyperc && git clone --depth=6 https://github.com/hyperc-ai/hyperc-psql-proxy && mkdir /etc/hyperc && cp hyperc-psql-proxy/config.yml.example /etc/hyperc/config.yml && echo rebuild16
 COPY config.yml /etc/hyperc/config.yml
 RUN mkdir /var/log/postgresql-proxy && chown postgres /var/log/postgresql-proxy
 COPY examples/base.sql /opt/hyperc/examples/base.sql
