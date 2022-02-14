@@ -43,8 +43,9 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en  
 ENV LC_ALL en_US.UTF-8 
 RUN cd /var/lib/postgresql && . .local/bin/activate && cd /tmp && git clone -b python38 https://github.com/grandrew/pyclips && cd pyclips && wget -q -O clips.zip 'https://downloads.sourceforge.net/project/clipsrules/CLIPS/6.31/clips_core_source_631.zip?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fclipsrules%2Ffiles%2FCLIPS%2F6.31%2Fclips_core_source_631.zip%2Fdownload&ts=1554816443' && unzip ./clips.zip && CLIPS_SRC=clips_core_source_631/core python ./setup.py build && CLIPS_SRC=clips_core_source_631/core python ./setup.py install
-RUN cd /var/lib/postgresql && . .local/bin/activate && pip install networkx==2.6.3 sympy==1.9 attrs
+RUN cd /var/lib/postgresql && . .local/bin/activate && pip install networkx==2.6.3 sympy==1.9 attrs sklearn matplotlib
 RUN cd /var/lib/postgresql && . .local/bin/activate && pip install git+https://github.com/hyperc-ai/hyperc && pip install git+https://github.com/hyperc-ai/hyper-etable && echo rebuild8
+RUN cd /var/lib/postgresql && . .local/bin/activate && pip install git+https://github.com/grandrew/sklearn-compiledtrees@pypy-ffi
 RUN mkdir /var/cache/hyperc && chmod 777 /var/cache/hyperc
 RUN cd /opt/hyperc && git clone --depth=6 https://github.com/hyperc-ai/hyperc-psql-proxy && mkdir /etc/hyperc && cp hyperc-psql-proxy/config.yml.example /etc/hyperc/config.yml && echo rebuild16
 COPY config.yml /etc/hyperc/config.yml
